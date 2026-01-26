@@ -14,8 +14,9 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
    cors: {
-      origin: "http://localhost:1234", // Frontend URL
-      methods: ["GET", "POST"]
+      origin: ["http://localhost:5173", "http://localhost:3000", "https://resttaurantyumrush.vercel.app", "https://yumrush-frontend.vercel.app"],
+      methods: ["GET", "POST"],
+      credentials: true
    }
 });
 
