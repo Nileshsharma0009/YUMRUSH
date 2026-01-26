@@ -60,9 +60,10 @@ const Booking = () => {
     };
 
     const handleCheckLoyalty = async () => {
-        if (!phone || phone.length < 10) return alert("Enter valid phone number first");
+        const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+        if (!cleanPhone || cleanPhone.length < 10) return alert("Enter valid 10-digit phone number first");
         try {
-            const res = await checkLoyaltyStatus(phone);
+            const res = await checkLoyaltyStatus(cleanPhone);
             setLoyaltyStatus(res);
         } catch (error) {
             console.error(error);
@@ -99,6 +100,11 @@ const Booking = () => {
     };
 
     const slots = ["12:00 PM", "1:00 PM", "2:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"];
+
+    const getSelectedTablePrice = () => {
+        const t = tables.find(t => t._id === selectedTable);
+        return t ? (t.price || 0) : 0;
+    };
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-6 flex flex-col items-center bg-background relative overflow-hidden">
@@ -250,7 +256,7 @@ const Booking = () => {
                             <div className="bg-surfaceGlass p-4 rounded-lg mb-6 text-sm space-y-2">
                                 <div className="flex justify-between">
                                     <span>Booking Fee</span>
-                                    <span>₹{tables.find(t => t._id === selectedTable)?.price || 0}</span>
+                                    <span>₹{getSelectedTablePrice()}</span>
                                 </div>
                                 <div className="flex justify-between text-textSecondary">
                                     <span>Est. Food Bill ({guests} guests)</span>
@@ -264,7 +270,7 @@ const Booking = () => {
                                 )}
                                 <div className="border-t border-white/10 pt-2 flex justify-between font-bold text-lg">
                                     <span>Total Payable</span>
-                                    <span>₹{Math.max(0, ((tables.find(t => t._id === selectedTable)?.price || 0) + ((guests || 1) * 500) - discount))}</span>
+                                    <span>₹{Math.max(0, (getSelectedTablePrice() + ((guests || 1) * 500) - discount))}</span>
                                 </div>
                             </div>
 
@@ -289,7 +295,7 @@ const Booking = () => {
 
                             <div className="flex flex-col gap-3">
                                 <button
-                                    onClick={() => generateReceipt(bookingData || {}, { code: couponCode, discount: discount })}
+                                    onClick={() => generateReceipt(bookingData || {}, { code: couponCode, discount: discount, tablePrice: getSelectedTablePrice() })}
                                     className="px-6 py-2 bg-white text-black font-bold rounded-full hover:bg-gray-200"
                                 >
                                     Download Receipt (PDF)

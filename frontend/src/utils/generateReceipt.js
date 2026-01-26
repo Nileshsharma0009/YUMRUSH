@@ -21,6 +21,7 @@ export const generateReceipt = (data, type = 'BOOKING') => {
     // --- BOOKING RECEIPT ---
     if (type === 'BOOKING') {
         const { booking, discountDetails = {} } = data;
+        const tablePrice = discountDetails.tablePrice || 0;
 
         doc.setFontSize(16);
         doc.setTextColor(0);
@@ -38,23 +39,31 @@ export const generateReceipt = (data, type = 'BOOKING') => {
 
         doc.line(20, y, 190, y); y += 10;
 
-        // Mock Financials
-        const basePrice = booking.guests * 500;
-        doc.text("Estimated Cover Charge:", 20, y);
-        doc.text(`Rs. ${basePrice}`, 170, y, null, null, "right");
+        // Financials
+        const foodEst = booking.guests * 500;
+
+        doc.text("Table Reservation Fee:", 20, y);
+        doc.text(`Rs. ${tablePrice}`, 170, y, null, null, "right");
+        y += 8;
+
+        doc.text("Estimated Food Bill:", 20, y);
+        doc.text(`Rs. ${foodEst}`, 170, y, null, null, "right");
+
+        let total = tablePrice + foodEst;
 
         if (discountDetails.discount > 0) {
             y += 10;
             doc.setTextColor(0, 180, 0);
             doc.text(`Coupon (${discountDetails.code}):`, 20, y);
             doc.text(`- Rs. ${discountDetails.discount}`, 170, y, null, null, "right");
+            total -= discountDetails.discount;
         }
 
         y += 15;
         doc.setFontSize(14);
         doc.setTextColor(0);
         doc.text("Total Payable at Restaurant:", 20, y);
-        doc.text(`Rs. ${basePrice - (discountDetails.discount || 0)}`, 170, y, null, null, "right");
+        doc.text(`Rs. ${Math.max(0, total)}`, 170, y, null, null, "right");
     }
 
     // --- ORDER RECEIPT (Dine-in) ---
