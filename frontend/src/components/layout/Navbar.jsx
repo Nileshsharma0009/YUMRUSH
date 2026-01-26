@@ -122,7 +122,7 @@ const Navbar = () => {
           <div className="hidden md:block">
             <Link to="/book">
               <button className="px-6 py-2 rounded-pill bg-accent text-black font-semibold text-sm hover:brightness-110 transition-all transform hover:scale-105">
-                Book a Table
+                Book Table
               </button>
             </Link>
           </div>
