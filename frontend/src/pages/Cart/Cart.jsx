@@ -22,7 +22,8 @@ const Cart = () => {
                     quantity: item.quantity
                 })),
                 totalAmount: cartTotal,
-                tableNumber
+                tableNumber,
+                paymentStatus: 'Paid' // Simulating successful payment
             };
 
             const response = await createOrder(orderData);
@@ -30,7 +31,7 @@ const Cart = () => {
             navigate('/order-success', { state: { order: response.order } });
         } catch (error) {
             console.error("Order Failed", error);
-            alert("Failed to place order");
+            alert(error.response?.data?.message || "Failed to place order");
         } finally {
             setLoading(false);
         }
@@ -113,7 +114,7 @@ const Cart = () => {
                             >
                                 {loading ? 'Placing Order...' : 'Place Order'}
                             </button>
-                            <p className="text-xs text-center text-textSecondary mt-4">Payment will be collected at the counter.</p>
+                            <p className="text-xs text-center text-textSecondary mt-4">Order will be sent directly to the kitchen.</p>
                         </div>
                     </div>
                 </div>

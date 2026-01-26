@@ -11,7 +11,7 @@ const KitchenDisplay = () => {
         fetchOrders();
 
         // Connect to Socket
-        const socket = io(import.meta.env.VITE_API_URL);
+        const socket = io('http://localhost:5000');
 
         // Listen for new orders
         socket.on('new_order', (newOrder) => {

@@ -6,14 +6,14 @@ const router = express.Router();
 // Create Order (Dine-in)
 router.post('/create', async (req, res) => {
     try {
-        const { items, totalAmount, tableNumber } = req.body;
+        const { items, totalAmount, tableNumber, paymentStatus } = req.body;
 
         const newOrder = new Order({
             items,
             totalAmount,
             tableNumber,
             status: 'Kitchen',
-            paymentStatus: 'Pending'
+            paymentStatus: paymentStatus || 'Pending'
         });
 
         await newOrder.save();
