@@ -1,0 +1,118 @@
+:root {
+  --nav-height: 90px;
+  --white: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.12);
+}
+
+.nav-premium {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  /* The Secret Sauce: Multi-layered backdrop filter */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: background 0.5s ease, height 0.5s ease;
+}
+
+.nav-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1px;
+}
+
+.brand-logo span {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+.nav-links-wrapper {
+  display: flex;
+  gap: 40px;
+}
+
+.nav-item {
+  position: relative;
+  text-decoration: none;
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 10px 0;
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+
+.nav-item:hover {
+  opacity: 1;
+}
+
+/* Premium Hover Indicator */
+.nav-dot {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--white);
+  border-radius: 50%;
+  transform: translateX(-50%) scale(0);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-item:hover .nav-dot {
+  transform: translateX(-50%) scale(1);
+}
+
+.contact-cta {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-dot {
+  width: 6px;
+  height: 6px;
+  background: #00ff88; /* Pulse of life */
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00ff88;
+}
+
+.contact-cta:hover {
+  background: white;
+  color: black;
+  transform: translateY(-2px);
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 900px) {
+  .nav-links-wrapper { display: none; }
+  .nav-container { padding: 0 24px; }
+}
