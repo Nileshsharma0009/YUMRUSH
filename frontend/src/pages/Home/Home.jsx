@@ -193,7 +193,7 @@ const Home = () => {
                 <span className="bg-accent/20 p-3 rounded-full text-accent"><FaUtensils /></span>
                 <div>
                   <h4 className="text-white font-bold mb-1">Visit Us</h4>
-                  <p>123 Culinary Avenue, Foodie District<br />Global City, 560001</p>
+                  <p>, Foodie District<br />Global City, 560001</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
