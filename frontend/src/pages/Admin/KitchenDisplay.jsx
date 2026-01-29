@@ -10,8 +10,14 @@ const KitchenDisplay = () => {
     useEffect(() => {
         fetchOrders();
 
-        // Connect to Socket
-        const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000');
+        // Connect to Socket (use only SOCKET_URL)
+        const SOCKET_URL = process.env.SOCKET_URL || process.env.API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:5000';
+        const socket = io(SOCKET_URL, {
+            transports: ['websocket'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            timeout: 20000,
+        });
 
         // Listen for new orders
         socket.on('new_order', (newOrder) => {

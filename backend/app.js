@@ -16,20 +16,38 @@ app.use(
   cors({
     origin: (origin, callback) => {
       const allowedOrigins = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://localhost:1234",
-        process.env.FRONTEND_URL
-      ];
-      if (!origin || allowedOrigins.includes(origin) || (origin && origin.endsWith(".vercel.app"))) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        process.env.FRONTEND_URL,
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost:1234',
+        'http://127.0.0.1:5173',
+      ].filter(Boolean);
+
+      if (!origin) return callback(null, true);
+
+      // Allow exact match or any vercel subdomain (explicit check)
+      if (allowedOrigins.includes(origin) || /(^https?:\/\/.*\.vercel\.app)(:\d+)?$/.test(origin)) {
+        return callback(null, true);
       }
+
+      return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
   })
 );
+
+// Health-check for deployments and easy debugging
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    env: {
+      node_env: process.env.NODE_ENV || 'development',
+      frontend_url: process.env.FRONTEND_URL || null,
+      mongo_set: !!process.env.MONGO_URI,
+    },
+    timestamp: new Date().toISOString(),
+  });
+});
 app.use(express.json());
 
 // Routes
