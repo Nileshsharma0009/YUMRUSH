@@ -29,6 +29,9 @@ logs/
 .env.test.local
 .env.production.local
 
+# Ignore all local env files at root, frontend and backend
+.env*
+
 # Parcel
 .parcel-cache/
 .cache/
