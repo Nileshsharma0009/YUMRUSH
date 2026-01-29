@@ -40,7 +40,7 @@ npm run dev
 ```
 
 **What to do:**
-- Open `http://localhost:5173/` in your browser
+- Open `http://:5173/` in your browser
 - You should see the YumRush landing page
 - It auto-refreshes when you save files
 

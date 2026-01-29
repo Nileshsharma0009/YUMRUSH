@@ -15,7 +15,13 @@ const server = http.createServer(app);
 const io = new Server(server, {
    cors: {
       origin: (origin, callback) => {
-         const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "http://localhost:1234"];
+         const allowedOrigins = [
+            "https://restaurantyumrush.vercel.app",
+            "http://localhost:1234",
+            "http://localhost:5173",
+            "http://localhost:3000",
+            process.env.FRONTEND_URL
+         ];
          if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
             callback(null, true);
          } else {
