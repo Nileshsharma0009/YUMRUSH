@@ -40,8 +40,11 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      console.warn('Unauthorized — admin login required');
+    const { response, config } = error;
+    console.error(`API Error: ${config?.method?.toUpperCase()} ${config?.url}`, response?.status, response?.data);
+
+    if (response?.status === 401) {
+      console.warn('Unauthorized — admin login required for:', config?.url);
     }
     return Promise.reject(error);
   }
