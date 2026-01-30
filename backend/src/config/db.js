@@ -1,17 +1,33 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import mongoose from "mongoose";
 
-
-dotenv.config();
+let isConnected = false;
 
 const ConnectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URL);
-        console.log("MongoDB connected successfully");
-    } catch (err) {
-        console.log("Error connecting to MongoDB:", err.message);
-        process.exit(1);
-    }
-}
+  const uri = process.env.MONGO_URL;
+
+  if (!uri) {
+    throw new Error("❌ Missing MONGO_URL environment variable");
+  }
+
+  if (isConnected) {
+    console.log("⚡ MongoDB already connected");
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000, // fail fast instead of hanging
+    });
+
+    isConnected = db.connections[0].readyState === 1;
+
+    console.log(
+      `✅ MongoDB connected: ${db.connections[0].host}`
+    );
+  } catch (error) {
+    console.error("❌ MongoDB connection fail:", error.message);
+    throw error; // important for deployment logs (Railway/Render)
+  }
+};
 
 export default ConnectDB;
