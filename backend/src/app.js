@@ -11,12 +11,19 @@ const app = express();
 dotenv.config();
 
 
-app.use(cors(
-    {
-        origin: [process.env.FRONTEND_URL, 'http://localhost:1234', 'https://restaurantyumrush.vercel.app/'],
-        credentials: true,
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:1234', 'https://restaurantyumrush.vercel.app'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
-));
+    return callback(new Error('CORS policy: origin not allowed'), false);
+  },
+  credentials: true,
+}));
 
 
 app.use(express.json());
