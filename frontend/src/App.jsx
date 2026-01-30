@@ -21,6 +21,7 @@ import { CartProvider } from './context/CartContext';
 import Cart from './pages/Cart/Cart';
 import OrderSuccess from './pages/Order/OrderSuccess';
 import Loyalty from './pages/Loyalty/Loyalty';
+import NotFound from './pages/NotFound';
 
 import ScrollToAnchor from './components/layout/ScrollToAnchor';
 
@@ -74,6 +75,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* 404 Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
         </div>
