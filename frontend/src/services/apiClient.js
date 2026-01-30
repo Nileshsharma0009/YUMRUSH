@@ -1,7 +1,12 @@
 import axios from 'axios';
+import ENV from '../config/env';
 
 // Single source of truth
-const API_URL = process.env.PARCEL_API_URL;
+const API_URL = ENV.API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : undefined);
+
+if (!API_URL) {
+  console.warn('API_URL is not set. Requests will use relative paths which may cause CORS issues.');
+}
 
 console.log('AXIOS BASE URL:', API_URL);
 
@@ -70,11 +75,16 @@ export const updateBookingStatus = async (id, status) => {
 };
 
 export const getTables = async (date, time) => {
-  const res = await apiClient.get(
-    `/bookings/available?date=${date}&time=${encodeURIComponent(time)}`
-  );
+  const params = new URLSearchParams();
+  if (date) params.append('date', date);
+  if (time) params.append('time', time);
+
+  const res = await apiClient.get(`/tables?${params.toString()}`);
+
+  // backend returns: [ { _id, name, ... }, ... ]
   return res.data;
 };
+
 
 /* =========================
    ORDERS

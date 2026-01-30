@@ -2,9 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const TableGrid = ({ tables, selectedTableId, onSelect, minSeats = 1 }) => {
+    // Safety check: ensure tables is an array
+    const tableList = Array.isArray(tables) ? tables : [];
+
+    if (tableList.length === 0) {
+        return <div className="text-center text-textSecondary col-span-full py-8">No tables found.</div>;
+    }
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 p-4">
-            {tables.map((table) => {
+            {tableList.map((table) => {
                 const isBooked = table.isBooked;
                 const isTooSmall = table.seats < minSeats;
                 const isDisabled = isBooked || isTooSmall;

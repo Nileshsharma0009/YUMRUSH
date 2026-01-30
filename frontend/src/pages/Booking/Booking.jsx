@@ -27,6 +27,7 @@ const Booking = () => {
     const phone = watch('phone');
 
     const handleSearchTables = async () => {
+
         const isValid = await trigger(['date', 'timeSlot', 'guests']);
         if (!isValid) return;
 
@@ -36,11 +37,40 @@ const Booking = () => {
             setTables(data);
             setStep(2);
         } catch (error) {
-            console.error(error);
+            console.error('Get tables error:', error);
+            const msg = error.response?.data?.message || error.message || 'Failed to fetch table availability. Please try again.';
+            alert(msg);
+            setTables([]);
         } finally {
             setLoading(false);
         }
     };
+
+
+//  const handleSearchTables = async () => {
+//   const isValid = await trigger(['date', 'timeSlot', 'guests']);
+//   if (!isValid) return;
+
+//   setLoading(true);
+//   try {
+//     const data = await getTables(date, timeSlot);
+
+//     if (!data.available) {
+//       alert("No tables available for this time");
+//       return;
+//     }
+
+//     // availability is true → move to next step
+//     // no table list because backend doesn't return tables
+//     setTables([]); 
+//     setStep(2);
+//   } catch (error) {
+//     console.error("Get tables error:", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
 
     const handleApplyCoupon = async () => {
         if (!couponCode) return;
