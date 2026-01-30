@@ -70,7 +70,9 @@ export const updateBookingStatus = async (id, status) => {
 };
 
 export const getTables = async (date, time) => {
-  const res = await apiClient.get(`/tables?date=${date}&time=${time}`);
+  const res = await apiClient.get(
+    `/bookings/available?date=${date}&time=${encodeURIComponent(time)}`
+  );
   return res.data;
 };
 
