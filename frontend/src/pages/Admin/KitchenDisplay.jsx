@@ -11,7 +11,7 @@ const KitchenDisplay = () => {
         fetchOrders();
 
         // Connect to Socket (use only SOCKET_URL)
-        const SOCKET_URL = process.env.SOCKET_URL || process.env.API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:5000';
+        const SOCKET_URL = (typeof process !== 'undefined' && process.env && process.env.SOCKET_URL) || 'http://localhost:5000';
         const socket = io(SOCKET_URL, {
             transports: ['websocket'],
             reconnection: true,

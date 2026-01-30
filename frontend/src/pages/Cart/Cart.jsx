@@ -103,7 +103,7 @@ const Cart = () => {
                                     className="w-full bg-black/40 border border-borderGlass rounded-md p-3 text-white focus:border-accent outline-none"
                                 >
                                     <option value="">Select Table</option>
-                                    {[1, 2, 3, 4, 5, 6].map(n => <option key={n} value={`T${n}`}>Table {n}</option>)}
+                                    {[1, 2, 3, 4, 5, 6].map(n => <option key={n} value={n}>Table {n}</option>)}
                                 </select>
                             </div>
 

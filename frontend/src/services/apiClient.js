@@ -1,60 +1,117 @@
 import axios from 'axios';
 
-const API_URL = process.env.API_URL || 'http://localhost:5000/api';
+// Single source of truth
+const API_URL = process.env.PARCEL_API_URL;
+
+console.log('AXIOS BASE URL:', API_URL);
 
 const apiClient = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
 });
 
+
+/* =========================
+   REQUEST INTERCEPTOR
+   Automatically attach JWT
+========================= */
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+/* =========================
+   RESPONSE INTERCEPTOR
+========================= */
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn('Unauthorized — admin login required');
+    }
+    return Promise.reject(error);
+  }
+);
+
+/* =========================
+   MENU (PUBLIC)
+========================= */
 export const getMenu = async (filters = {}) => {
-    const params = new URLSearchParams(filters).toString();
-    const response = await apiClient.get(`/menu?${params}`);
-    return response.data;
+  const params = new URLSearchParams(filters).toString();
+  const res = await apiClient.get(`/menu?${params}`);
+  return res.data;
 };
 
-// Bookings
-export const createBooking = (data) => apiClient.post('/bookings', data).then(res => res.data);
-export const getBookings = () => apiClient.get('/bookings').then(res => res.data);
+/* =========================
+   BOOKINGS (PUBLIC)
+========================= */
+export const createBooking = async (data) => {
+  const res = await apiClient.post('/bookings', data);
+  return res.data;
+};
+
+export const getBookings = async () => {
+  const res = await apiClient.get('/bookings');
+  return res.data;
+};
+
+export const updateBookingStatus = async (id, status) => {
+  const res = await apiClient.put(`/bookings/${id}/status`, { status });
+  return res.data;
+};
 
 export const getTables = async (date, time) => {
-    const response = await apiClient.get(`/tables?date=${date}&time=${time}`);
-    return response.data;
+  const res = await apiClient.get(`/tables?date=${date}&time=${time}`);
+  return res.data;
 };
 
-// Admin Functions
-export const addMenuItem = async (menuData) => {
-    const response = await apiClient.post('/menu', menuData);
-    return response.data;
-};
-
-// Offers & Loyalty
-export const validateCoupon = async (code, amount) => {
-    const response = await apiClient.post('/coupons/validate', { code, amount });
-    return response.data;
-};
-
-export const checkLoyaltyStatus = async (phone) => {
-    const response = await apiClient.get(`/loyalty/${phone}`);
-    return response.data;
-};
-
-// Orders
+/* =========================
+   ORDERS
+========================= */
 export const createOrder = async (orderData) => {
-    const response = await apiClient.post('/orders/create', orderData);
-    return response.data;
+  const res = await apiClient.post('/orders', orderData);
+  return res.data;
 };
 
+// ADMIN (KITCHEN)
 export const getActiveOrders = async () => {
-    const response = await apiClient.get('/orders/active_orders');
-    return response.data;
+  const res = await apiClient.get('/orders/active');
+  return res.data;
 };
 
 export const updateOrderStatus = async (id, status) => {
-    const response = await apiClient.put(`/orders/update_status/${id}`, { status });
-    return response.data;
+  const res = await apiClient.patch(`/orders/${id}/status`, { status });
+  return res.data;
+};
+
+/* =========================
+   ADMIN MENU
+========================= */
+export const addMenuItem = async (menuData) => {
+  const res = await apiClient.post('/menu', menuData);
+  return res.data;
+};
+
+/* =========================
+   OFFERS & LOYALTY
+========================= */
+export const validateCoupon = async (code, amount) => {
+  const res = await apiClient.post('/coupons/validate', { code, amount });
+  return res.data;
+};
+
+export const checkLoyaltyStatus = async (phone) => {
+  const res = await apiClient.get(`/loyalty/${phone}`);
+  return res.data;
 };
 
 export default apiClient;

@@ -78,6 +78,8 @@ const Booking = () => {
             // Include Discount Data
             const payload = {
                 ...data,
+                guests: parseInt(data.guests, 10), // Ensure integer
+                time: data.timeSlot, // Backend expects 'time'
                 tableId: selectedTable,
                 couponCode: discount > 0 ? couponCode : undefined,
                 discountAmount: discount
@@ -93,7 +95,8 @@ const Booking = () => {
             setStep(1);
         } catch (error) {
             console.error('Booking failed:', error);
-            alert('Failed to book table. Please try again.');
+            const errMsg = error.response?.data?.message || 'Failed to book table. Please try again.';
+            alert(errMsg);
         } finally {
             setLoading(false);
         }
@@ -204,8 +207,12 @@ const Booking = () => {
                             <div className="space-y-4 mb-6">
                                 <div>
                                     <label className="block text-sm text-textSecondary mb-2">Full Name</label>
-                                    <input {...register("customerName", { required: true })} className="w-full bg-black/40 border border-borderGlass rounded-md p-3 text-white focus:border-accent outline-none" placeholder="John Doe" />
-                                    {errors.customerName && <span className="text-danger text-xs">Required</span>}
+                                    <input {...register("name", {
+                                        required: "Name is required",
+                                        minLength: { value: 3, message: "Name must be at least 3 characters" },
+                                        maxLength: { value: 50, message: "Name too long" }
+                                    })} className="w-full bg-black/40 border border-borderGlass rounded-md p-3 text-white focus:border-accent outline-none" placeholder="John Doe" />
+                                    {errors.name && <span className="text-danger text-xs">{errors.name.message}</span>}
                                 </div>
                                 <div className="flex gap-2">
                                     <div className="flex-1">

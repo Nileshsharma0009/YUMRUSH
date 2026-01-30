@@ -4,79 +4,80 @@ import { useForm } from 'react-hook-form';
 import apiClient from '../../services/apiClient';
 
 const AdminLogin = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const onSubmit = async (data) => {
-        setLoading(true);
-        setError('');
-        try {
-            // In a real app, you'd get a token here.
-            // For this blueprint, we'll verify against the backend mock login
-            await apiClient.post('/auth/login', data);
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setError('');
 
-            // Set a simple flag in localStorage for route protection
-            localStorage.setItem('isAdmin', 'true');
-            navigate('/admin/dashboard');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      const res = await apiClient.post('/admin/login', {
+        email: data.email,
+        password: data.password,
+      });
 
-    return (
-        <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-background relative overflow-hidden">
-            {/* Background Effect */}
-            <div className="absolute top-0 left-0 w-full h-full bg-accent/5 blur-[150px] pointer-events-none"></div>
+      // ✅ SAVE TOKEN
+      localStorage.setItem('adminToken', res.data.token);
+      localStorage.setItem('isAdmin', 'true');
+     console.log('API_URL USED:', process.env.API_URL);
 
-            <div className="w-full max-w-md relative z-10 glass-panel p-8 rounded-2xl border border-white/10">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-secondary font-bold text-accent mb-2">Admin Portal</h2>
-                    <p className="text-textSecondary text-sm">Access the kitchen dashboard</p>
-                </div>
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-md mb-6 text-sm text-center">
-                        {error}
-                    </div>
-                )}
+  return (
+    <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-background">
+      <div className="w-full max-w-md glass-panel p-8 rounded-2xl border border-white/10">
+        <h2 className="text-3xl font-bold text-accent text-center mb-6">
+          Admin Portal
+        </h2>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div>
-                        <label className="block text-sm text-textSecondary mb-2">Username</label>
-                        <input
-                            {...register("username", { required: "Username is required" })}
-                            className="w-full bg-black/40 border border-borderGlass rounded-md p-3 text-white focus:border-accent focus:outline-none transition-colors"
-                            placeholder="admin"
-                        />
-                        {errors.username && <span className="text-danger text-xs mt-1">{errors.username.message}</span>}
-                    </div>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-md mb-6 text-sm text-center">
+            {error}
+          </div>
+        )}
 
-                    <div>
-                        <label className="block text-sm text-textSecondary mb-2">Password</label>
-                        <input
-                            type="password"
-                            {...register("password", { required: "Password is required" })}
-                            className="w-full bg-black/40 border border-borderGlass rounded-md p-3 text-white focus:border-accent focus:outline-none transition-colors"
-                            placeholder="••••••"
-                        />
-                        {errors.password && <span className="text-danger text-xs mt-1">{errors.password.message}</span>}
-                    </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <label className="block text-sm mb-2">Email</label>
+            <input
+              {...register('email', { required: 'Email is required' })}
+              className="w-full p-3 rounded-md bg-black/40 border border-borderGlass"
+              placeholder="admin@yumrush.com"
+            />
+            {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+          </div>
 
-                    <button
-                        disabled={loading}
-                        type="submit"
-                        className="w-full py-3 bg-accent text-black font-bold rounded-pill hover:shadow-lg hover:shadow-accent/20 hover:scale-[1.02] transition-all disabled:opacity-50"
-                    >
-                        {loading ? 'Authenticating...' : 'Enter Kitchen'}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
+          <div>
+            <label className="block text-sm mb-2">Password</label>
+            <input
+              type="password"
+              {...register('password', { required: 'Password is required' })}
+              className="w-full p-3 rounded-md bg-black/40 border border-borderGlass"
+              placeholder="••••••••"
+            />
+            {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-accent text-black font-bold rounded-full disabled:opacity-50"
+          >
+            {loading ? 'Authenticating...' : 'Login'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default AdminLogin;

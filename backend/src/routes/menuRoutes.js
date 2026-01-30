@@ -1,51 +1,91 @@
 import express from 'express';
 import Menu from '../models/Menu.js';
+import protectAdmin from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Get all menu items
+/* ======================================================
+   PUBLIC ROUTES (Customer)
+====================================================== */
+
+/**
+ * GET /api/menu
+ * Optional query params:
+ *  - category
+ *  - isVeg (true / false)
+ */
 router.get('/', async (req, res) => {
-    try {
-        const filters = {};
-        if (req.query.category) filters.category = req.query.category;
-        if (req.query.isVeg) filters.isVeg = req.query.isVeg === 'true';
+  try {
+    const { category, isVeg } = req.query;
 
-        const menu = await Menu.find(filters);
-        res.json(menu);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    const filter = {};
+
+    if (category) filter.category = category;
+    if (isVeg === 'true') filter.isVeg = true;
+    if (isVeg === 'false') filter.isVeg = false;
+
+    const menuItems = await Menu.find(filter).sort({ createdAt: -1 });
+    res.json(menuItems);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// Add menu item (Admin)
-router.post('/', async (req, res) => {
-    const menuItem = new Menu(req.body);
-    try {
-        const newMenuItem = await menuItem.save();
-        res.status(201).json(newMenuItem);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+/* ======================================================
+   ADMIN ROUTES (Protected)
+====================================================== */
+
+/**
+ * POST /api/menu
+ * Add new menu item (admin only)
+ */
+router.post('/', protectAdmin, async (req, res) => {
+  try {
+    const menuItem = await Menu.create(req.body);
+    res.status(201).json(menuItem);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
-// Update menu item
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedMenuItem = await Menu.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(updatedMenuItem);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+/**
+ * PUT /api/menu/:id
+ * Update menu item (admin only)
+ */
+router.put('/:id', protectAdmin, async (req, res) => {
+  try {
+    const updatedItem = await Menu.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
     }
+
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
-// Delete menu item
-router.delete('/:id', async (req, res) => {
-    try {
-        await Menu.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Menu item deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+/**
+ * DELETE /api/menu/:id
+ * Delete menu item (admin only)
+ */
+router.delete('/:id', protectAdmin, async (req, res) => {
+  try {
+    const deletedItem = await Menu.findByIdAndDelete(req.params.id);
+
+    if (!deletedItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
     }
+
+    res.json({ message: 'Menu item deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 export default router;
