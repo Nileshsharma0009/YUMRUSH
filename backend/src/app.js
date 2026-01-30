@@ -13,7 +13,7 @@ dotenv.config();
 
 app.use(cors(
     {
-        origin: [process.env.FRONTEND_URL, 'http://localhost:1234', 'http://localhost:3000'],
+        origin: [process.env.FRONTEND_URL, 'http://localhost:1234', 'https://restaurantyumrush.vercel.app/'],
         credentials: true,
     }
 ));
