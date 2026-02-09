@@ -60,7 +60,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/loyalty', loyaltyRoutes);
 
-
+app.get('/' ,(req , res) => {
+  res.status(200).json({ message: "Welcome to YumRush API" });
+})
 
 
 export default app;
