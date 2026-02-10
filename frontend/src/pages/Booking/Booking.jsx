@@ -145,7 +145,7 @@ const Booking = () => {
 
             <div className="w-full max-w-2xl relative z-10">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-secondary font-bold mb-2">Reserve Your Spot</h1>
+                    <h1 className="text-4xl font-secondary font-bold mb-2">Reserve  Spot</h1>
                     <div className="flex justify-center gap-4 text-sm text-textSecondary">
                         <span className={step >= 1 ? "text-accent" : ""}>1. Details</span>
                         <span>&rarr;</span>

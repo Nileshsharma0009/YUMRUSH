@@ -6,11 +6,11 @@ const ConnectDB = async () => {
   const uri = process.env.MONGO_URL;
 
   if (!uri) {
-    throw new Error("❌ Missing MONGO_URL environment variable");
+    throw new Error(" Missing MONGO_URL environment variable");
   }
 
   if (isConnected) {
-    console.log("⚡ MongoDB already connected");
+    console.log(" MongoDB already connected");
     return;
   }
 
@@ -22,10 +22,10 @@ const ConnectDB = async () => {
     isConnected = db.connections[0].readyState === 1;
 
     console.log(
-      `✅ MongoDB connected: ${db.connections[0].host}`
+      ` MongoDB connected: ${db.connections[0].host}`
     );
   } catch (error) {
-    console.error("❌ MongoDB connection fail:", error.message);
+    console.error(" MongoDB connection fail:", error.message);
     throw error; // important for deployment logs (Railway/Render)
   }
 };
